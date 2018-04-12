@@ -1,8 +1,6 @@
 package org.ansj.ansj_lucene5_plug;
 
-import java.io.IOException;
-
-import org.ansj.library.UserDefineLibrary;
+import org.ansj.library.DicLibrary;
 import org.ansj.lucene5.AnsjAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -20,12 +18,14 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
 
+import java.io.IOException;
+
 public class PhraseTest {
 	public static void main(String[] args) throws IOException, ParseException {
 
-		UserDefineLibrary.insertWord("上网人");
-		UserDefineLibrary.insertWord("网人");
-		AnsjAnalyzer ansjAnalyzer = new AnsjAnalyzer(AnsjAnalyzer.TYPE.index);
+		DicLibrary.insert(DicLibrary.DEFAULT, "上网人");
+		DicLibrary.insert(DicLibrary.DEFAULT, "网人");
+		AnsjAnalyzer ansjAnalyzer = new AnsjAnalyzer(AnsjAnalyzer.TYPE.index_ansj);
 		TokenStream tokenStream = ansjAnalyzer.tokenStream("上网人员测试", "test");
 		while (tokenStream.incrementToken()) {
 			System.out.println(tokenStream.getAttribute(CharTermAttribute.class));
@@ -38,7 +38,7 @@ public class PhraseTest {
 		writer.commit();
 		IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(writer));
 		System.out.println(searcher.count(new TermQuery(new Term("test", "网人"))));
-		Query q = new QueryParser("test", new AnsjAnalyzer(AnsjAnalyzer.TYPE.index)).parse("\"上网人\"");
+		Query q = new QueryParser("test", new AnsjAnalyzer(AnsjAnalyzer.TYPE.index_ansj)).parse("\"上网人\"");
 		System.out.println(q);
 		System.out.println(searcher.count(q));
 	}
